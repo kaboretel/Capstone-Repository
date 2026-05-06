@@ -1,0 +1,1029 @@
+---
+title: "DATA 205 Capstone Project: From Service Coverage to Mortality Reduction: Predictive & spatial analysis of maternal health in Malawi**"
+author: "Telesphore Evariste Larba KABORE"
+format: docx
+editor: visual
+---
+
+
+# **PART I. INTRODUCTION**
+
+Maternal health remains a critical global public health priority, particularly in low- and middle-income countries (LMICs) where preventable maternal deaths continue to occur despite incremental improvements in service delivery. Malawi has demonstrated notable progress in reducing maternal mortality over the past decade, as evidenced by comparative data from the 2015–16 and 2024 Demographic and Health Surveys (DHS). Nevertheless, improvements in national-level indicators do not necessarily reflect equitable access to maternal health services across diverse populations and geographic contexts.
+
+Maternal health outcomes are fundamentally shaped by the utilization of key services along the continuum of care, including antenatal care (ANC), skilled birth attendance (SBA), and postnatal care (PNC). Although increases in service coverage are widely used as proxies for improved health outcomes, it remains unclear whether such gains translate into consistent reductions in maternal mortality, or whether disparities persist among distinct socioeconomic groups and geographic regions. This project builds on prior research and professional experience in community health systems, including doctoral-level work examining how community-based interventions influence maternal and child health service uptake in Malawi. Extending this foundation, the present capstone applies data science methods to move beyond descriptive statistics and generate deeper insights into patterns, disparities, and predictors of maternal health service utilization.
+
+## **Background and Context**
+
+The relationship between service coverage and health outcomes is multifaceted. While expanded access to maternal health services is expected to reduce maternal mortality, the effectiveness of these services is contingent upon multiple factors, including quality of care, timeliness of utilization, and broader social determinants such as educational attainment, household wealth, and geographic accessibility.
+
+The Malawi DHS datasets provide nationally representative data that enable the analysis of maternal health service utilization across time. However, these datasets primarily capture service coverage rather than direct measures of maternal mortality at subnational levels. To address this limitation, the present study incorporates World Development Indicators (WDI) data to provide national-level trends in maternal mortality and to contextualize findings derived from DHS analyses.
+
+## **Data Sources and Study Design**
+
+This study draws on three primary data sources:
+
+- **Malawi DHS 2015–16 and DHS 2024**: Nationally representative household surveys providing detailed information on maternal health service utilization, demographic characteristics, and socioeconomic factors.
+- **World Development Indicators (2002–2024)**: Country-level data from the World Bank, encompassing maternal mortality ratios, health expenditure, and education indicators.
+
+The DHS data require extensive cleaning, harmonization across survey years, and the application of sampling weights to produce valid population-level estimates. In contrast, WDI data are aggregated at the national level and do not capture subnational variation, which limits their utility for localized analysis.
+
+## **Research Goal and Questions**
+
+The primary objective of this project is to assess whether improvements in maternal health service coverage in Malawi are consistent with observed trends in maternal mortality reduction, while identifying populations and geographic areas where persistent gaps in service utilization remain.
+
+To achieve this objective, the project addresses the following research questions:
+
+1. How have maternal health service indicators — ANC 4+, SBA, and PNC — changed between the DHS 2015–16 and DHS 2024 survey rounds?
+2. How do these indicators vary across socioeconomic strata, including wealth quintile, educational attainment, and place of residence?
+3. Are improvements in service coverage equitably distributed across population subgroups?
+4. Which districts or regions exhibit the greatest improvements or most persistent gaps in service utilization?
+5. What individual- and household-level factors predict non-utilization of maternal health services?
+6. Do improvements in service coverage align with national trends in maternal mortality?
+
+## **Analytical Approach**
+
+To address these research questions, the project employs a multi-step analytical framework comprising the following components:
+
+- **Descriptive Analysis**: Weighted summary statistics to characterize trends in maternal health service coverage over time.
+- **Equity Analysis**: Stratified comparisons by wealth, education, and place of residence to identify and quantify disparities.
+- **Predictive Modeling**: Logistic regression and machine learning approaches to identify individual- and household-level determinants of non-utilization.
+- **Spatial Analysis**: Geographic mapping of service coverage and identification of high-risk areas using DHS GPS data.
+- **Contextual Analysis**: Comparative examination of DHS service coverage trends alongside WDI maternal mortality indicators.
+
+## **Significance of the Study**
+
+By integrating survey microdata, predictive analytics, and spatial visualization, this project aims to generate actionable evidence to inform maternal health planning in Malawi. Rather than focusing exclusively on national averages, the analysis foregrounds inequities and geographic disparities that are essential for the design of targeted interventions. Ultimately, this work contributes to a broader understanding of whether observed progress in service coverage is sufficient to drive meaningful and equitable reductions in maternal mortality.
+
+
+# **PART II. DATA ANALYSIS, MODELING, AND SPATIAL INSIGHTS**
+
+# **Loading Packages**
+
+```{r}
+library(tidyverse)
+library(haven)
+library(sf)
+library(WDI)
+```
+
+
+# **II.1. DATA INGESTION, CLEANING AND WRANGLING.**
+
+## **Defining rAW data folder path (relative to project root**
+
+```{r}
+raw_dir <- "1_Data/1_Raw"
+```
+
+
+## **check you are in the right place (project root)**
+
+```{r}
+getwd()
+list.files(raw_dir)
+```
+## **Load DHS data sets (Stata .dta / .DTA)**
+
+```{r}
+dhs15_ir <- read_dta(file.path(raw_dir, "Dhs_15_ir.DTA"))
+dhs15_br <- read_dta(file.path(raw_dir, "Dhs_15_br.DTA"))
+
+dhs24_ir <- read_dta(file.path(raw_dir, "Dhs_24_ir.dta"))
+dhs24_br <- read_dta(file.path(raw_dir, "Dhs_24_br.dta"))
+```
+
+
+## **Load GPS / spatial files (shape files)**
+
+```{r}
+gps15 <- st_read(file.path(raw_dir, "Dhs_15_gps.shp"))
+gps24 <- st_read(file.path(raw_dir, "Dhs_24_gps.shp"))
+```
+
+## **Quick verification**
+
+```{r}
+glimpse(dhs15_ir)
+glimpse(dhs24_ir)
+
+nrow(dhs15_ir); nrow(dhs15_br)
+nrow(dhs24_ir); nrow(dhs24_br)
+
+st_geometry_type(gps15)
+st_geometry_type(gps24)
+
+st_crs(gps15)
+st_crs(gps24)
+```
+
+## **Load WDI (CSV file)**
+
+```{r}
+wdi_meta <- read_csv(file.path(raw_dir, "wdi_meta.csv"))
+glimpse(wdi_meta)
+```
+
+## **Creating output folders**
+
+
+```{r}
+out_dir <- "3_Output"
+fig_dir <- file.path(out_dir, "figures")
+ppt_dir <- file.path(out_dir, "ppt")
+
+dir.create(out_dir, showWarnings = FALSE)
+dir.create(fig_dir, showWarnings = FALSE, recursive = TRUE)
+dir.create(ppt_dir, showWarnings = FALSE, recursive = TRUE)
+```
+
+## **Creating a district “key” cleaner**
+
+
+```{r}
+clean_district_key <- function(x) {
+  x %>%
+    stringr::str_to_lower() %>%
+    stringr::str_trim() %>%
+    stringr::str_squish() %>%
+    # Fix known DHS label inconsistencies
+    stringr::str_replace_all("nkhatabay", "nkhata bay") %>%
+    stringr::str_replace_all("nkhota kota", "nkhotakota") %>%
+    stringr::str_replace_all("mulange", "mulanje") %>%
+    stringr::str_replace_all("chradzulu", "chiradzulu") %>%
+    stringr::str_replace_all("ndanje", "nsanje") %>%
+    # Handle special 2024 category
+    stringr::str_replace_all("dowa \\(camps\\)", "dowa") %>%
+    # Optional: if your boundary file uses no "rural" suffix
+    stringr::str_replace_all("\\s+rural$", "")
+}
+```
+
+## **Building cleaned DHS district fields + weights (2015 & 2024 IR)**
+## **2015 (district variable = sdist)**
+
+```{r}
+dhs15_ir_clean <- dhs15_ir %>%
+  mutate(
+    district_name_raw = haven::as_factor(sdist),
+    district_key = clean_district_key(district_name_raw),
+    wt = v005 / 1000000
+  )
+```
+
+
+## **2024 (district variable = sdistrict)**
+
+```{r}
+dhs24_ir_clean <- dhs24_ir %>%
+  mutate(
+    district_name_raw = haven::as_factor(sdistrict),
+    district_key = clean_district_key(district_name_raw),
+    wt = v005 / 1000000
+  )
+```
+
+
+## **Quick check: do we have 28 districts?**
+
+```{r}
+dhs15_ir_clean %>% distinct(district_key) %>% arrange(district_key)
+dhs24_ir_clean %>% distinct(district_key) %>% arrange(district_key)
+
+dhs15_ir_clean %>% count(district_key, sort = TRUE) %>% print(n = 50)
+dhs24_ir_clean %>% count(district_key, sort = TRUE) %>% print(n = 50)
+```
+
+# **II. Exploratory Data Analysis and Visualization.**
+
+## **II.1. Goal**
+
+The goal of this exploratory data analysis is to examine patterns, 
+trends, and inequities in maternal health service utilization 
+in Malawi using the cleaned DHS 2015–16 and 2024 datasets. 
+Specifically, this stage focuses on descriptive and geographic 
+comparisons of skilled birth attendance, antenatal care, and 
+postnatal care to identify who is being left behind and where 
+gaps persist.
+
+
+## **II.2. Data description**
+
+This analysis uses the Malawi Demographic and Health Surveys (DHS) 2015–16 
+and 2024, which are nationally representative household surveys providing 
+data on maternal health service utilization, demographics, and socioeconomic 
+characteristics. The datasets have been cleaned, harmonized, and weighted to 
+ensure comparability across survey years and to produce representative 
+estimates.
+
+## **II.3. Descriptive Statistics**
+
+This section summarizes key maternal health indicators and examines their 
+distribution across the population. All estimates are weighted using DHS 
+sampling weights to ensure national representativeness.
+
+### **Create Weight Variable**
+
+#### Create shorter working names
+
+```{r}
+dhs_2015 <- dhs15_ir_clean
+dhs_2024 <- dhs24_ir_clean
+```
+
+### Add DHS sampling weights
+
+```{r}
+dhs_2015 <- dhs_2015 %>%
+  mutate(weight = v005 / 1000000)
+
+dhs_2024 <- dhs_2024 %>%
+  mutate(weight = v005 / 1000000)
+
+glimpse(dhs_2015)
+glimpse(dhs_2024)
+```
+
+The Malawi DHS 2015 and 2024 individual recode datasets were successfully 
+loaded and prepared for analysis. Both datasets contain large nationally 
+representative (approximately 24,500 women in 2015 and 21,500 in 2024), 
+ensuring strong statistical power for maternal health analysis. A normalized 
+sampling weight variable (weight) was created from the DHS weight variable 
+(v005) to allow for representative, population-level estimates. Key variables 
+of interest, including antenatal care visits (m14) and education (v133), were 
+confirmed to be present in both datasets, enabling consistent comparisons 
+across survey years.
+
+
+## ** Create ANC4+ Variable** 
+
+```{r}
+dhs_2015 <- dhs_2015 %>%
+  mutate(
+    anc4plus = case_when(
+      is.na(m14_1) ~ NA_real_,
+      m14_1 >= 4 ~ 1,
+      TRUE ~ 0
+    )
+  )
+
+dhs_2024 <- dhs_2024 %>%
+  mutate(
+    anc4plus = case_when(
+      is.na(m14_1) ~ NA_real_,
+      m14_1 >= 4 ~ 1,
+      TRUE ~ 0
+    )
+  )
+```
+
+
+## ** Create SBA variable**
+
+```{r}
+dhs_2015 <- dhs_2015 %>%
+  mutate(
+    sba = case_when(
+      m3a_1 == 1 |  # doctor
+        m3b_1 == 1 |  # nurse/midwife
+        m3c_1 == 1 ~ 1,
+      TRUE ~ 0
+    )
+  )
+
+dhs_2024 <- dhs_2024 %>%
+  mutate(
+    sba = case_when(
+      m3a_1 == 1 |
+        m3b_1 == 1 |
+        m3c_1 == 1 ~ 1,
+      TRUE ~ 0
+    )
+  )
+```
+
+
+## **Create PNC Variable**
+
+```{r}
+dhs_2015 <- dhs_2015 %>%
+  mutate(
+    pnc = case_when(
+      m70_1 <= 2 ~ 1,   # within 2 days
+      m70_1 > 2 ~ 0,
+      TRUE ~ NA_real_
+    )
+  )
+
+dhs_2024 <- dhs_2024 %>%
+  mutate(
+    pnc = case_when(
+      m70_1 <= 2 ~ 1,
+      m70_1 > 2 ~ 0,
+      TRUE ~ NA_real_
+    )
+  )
+```
+
+
+
+## **II.2. EXPLORATORY DATA ANALYSIS AND VISUALIZATION**
+
+## **II.2.1. Descriptive statistics for all indicators**
+
+### 2015
+
+```{r}
+dhs_2015 %>%
+  summarise(
+    ANC4 = weighted.mean(anc4plus, weight, na.rm = TRUE),
+    SBA  = weighted.mean(sba, weight, na.rm = TRUE),
+    PNC  = weighted.mean(pnc, weight, na.rm = TRUE)
+  )
+```
+
+
+### 2024
+
+
+```{r}
+dhs_2024 %>%
+  summarise(
+    ANC4 = weighted.mean(anc4plus, weight, na.rm = TRUE),
+    SBA  = weighted.mean(sba, weight, na.rm = TRUE),
+    PNC  = weighted.mean(pnc, weight, na.rm = TRUE)
+  )
+```
+
+Between 2015 and 2024, Malawi shows notable improvement in antenatal care 
+utilization, with the proportion of women receiving at least four ANC visits 
+increasing from 51.0% to 63.1%. This suggests progress in early and continued 
+engagement with maternal health services. However, skilled birth attendance 
+(SBA) declined significantly, dropping from 49.7% in 2015 to 33.0% in 2024, 
+indicating a concerning gap between antenatal care uptake and access to 
+skilled delivery services. Postnatal care (PNC) coverage remains consistently 
+high in both years (~99%), suggesting strong performance in post-delivery 
+follow-up, though this may also reflect measurement or reporting patterns 
+that warrant further examination. Overall, the findings highlight a 
+disconnect along the maternal care continuum, where improvements in antenatal 
+care do not translate into increased use of skilled delivery services.
+
+## **II.2.2. Visualization**
+
+## Loading packages
+
+```{r}
+library(scales)
+```
+
+
+### **II.2.2.1. Overall maternal health coverage: 2015 vs 2024**
+
+```{r}
+overall_2015 <- dhs_2015 %>%
+  summarise(
+    ANC4 = weighted.mean(anc4plus, weight, na.rm = TRUE),
+    SBA  = weighted.mean(sba, weight, na.rm = TRUE),
+    PNC  = weighted.mean(pnc, weight, na.rm = TRUE)
+  ) %>%
+  mutate(year = "2015")
+
+overall_2024 <- dhs_2024 %>%
+  summarise(
+    ANC4 = weighted.mean(anc4plus, weight, na.rm = TRUE),
+    SBA  = weighted.mean(sba, weight, na.rm = TRUE),
+    PNC  = weighted.mean(pnc, weight, na.rm = TRUE)
+  ) %>%
+  mutate(year = "2024")
+
+overall_long <- bind_rows(overall_2015, overall_2024) %>%
+  pivot_longer(cols = c(ANC4, SBA, PNC),
+               names_to = "indicator",
+               values_to = "coverage")
+
+ggplot(overall_long, aes(x = indicator, y = coverage, fill = year)) +
+  geom_col(position = "dodge") +
+  scale_y_continuous(labels = percent_format(accuracy = 1)) +
+  labs(
+    title = "Maternal Health Service Coverage in Malawi, 2015 vs 2024",
+    x = "Indicator",
+    y = "Weighted Coverage"
+  ) +
+  theme_minimal()
+```
+
+
+
+
+The figure shows that antenatal care (ANC4+) coverage increased between 2015 
+and 2024, while skilled birth attendance (SBA) declined substantially. 
+Postnatal care (PNC) remained consistently high in both years. These results 
+suggest improvements in antenatal care utilization but a concerning drop in 
+access to skilled delivery services.
+
+## **II.3 TREND AND EQUITY ANALYSIS
+
+
+### **II.3.1. ANC4+ by wealth quintile
+
+```{r}
+anc_wealth_2015 <- dhs_2015 %>%
+  group_by(v190) %>%
+  summarise(coverage = weighted.mean(anc4plus, weight, na.rm = TRUE)) %>%
+  mutate(year = "2015")
+
+anc_wealth_2024 <- dhs_2024 %>%
+  group_by(v190) %>%
+  summarise(coverage = weighted.mean(anc4plus, weight, na.rm = TRUE)) %>%
+  mutate(year = "2024")
+
+anc_wealth <- bind_rows(anc_wealth_2015, anc_wealth_2024) %>%
+  mutate(
+    wealth = factor(v190,
+                    levels = c(1,2,3,4,5),
+                    labels = c("Poorest","Poorer","Middle","Richer","Richest"))
+  )
+
+ggplot(anc_wealth, aes(x = wealth, y = coverage, fill = year)) +
+  geom_col(position = "dodge") +
+  scale_y_continuous(labels = percent_format(accuracy = 1)) +
+  labs(
+    title = "ANC 4+ Coverage by Wealth Quintile",
+    x = "Wealth Quintile",
+    y = "Weighted Coverage"
+  ) +
+  theme_minimal()
+```
+
+
+ANC4+ coverage improved across all wealth groups, but clear inequalities 
+persist, with higher coverage among the richest compared to the poorest.
+
+### **II.3.2. SBA by wealth quintile
+
+```{r}
+sba_wealth_2015 <- dhs_2015 %>%
+  group_by(v190) %>%
+  summarise(coverage = weighted.mean(sba, weight, na.rm = TRUE)) %>%
+  mutate(year = "2015")
+
+sba_wealth_2024 <- dhs_2024 %>%
+  group_by(v190) %>%
+  summarise(coverage = weighted.mean(sba, weight, na.rm = TRUE)) %>%
+  mutate(year = "2024")
+
+sba_wealth <- bind_rows(sba_wealth_2015, sba_wealth_2024) %>%
+  mutate(
+    wealth = factor(v190,
+                    levels = c(1,2,3,4,5),
+                    labels = c("Poorest","Poorer","Middle","Richer","Richest"))
+  )
+
+ggplot(sba_wealth, aes(x = wealth, y = coverage, fill = year)) +
+  geom_col(position = "dodge") +
+  scale_y_continuous(labels = percent_format(accuracy = 1)) +
+  labs(
+    title = "Skilled Birth Attendance by Wealth Quintile",
+    x = "Wealth Quintile",
+    y = "Weighted Coverage"
+  ) +
+  theme_minimal()
+```
+
+The chart shows that skilled birth attendance declines in 2024 across all 
+wealth groups compared to 2015. Coverage remains higher among wealthier 
+women, highlighting persistent inequalities, but the overall decline suggests 
+worsening access to skilled delivery services across the population.
+
+
+### **II.3.3. Maternal health indicators by education level**
+
+```{r}
+edu_2015 <- dhs_2015 %>%
+  group_by(v106) %>%
+  summarise(
+    ANC4 = weighted.mean(anc4plus, weight, na.rm = TRUE),
+    SBA  = weighted.mean(sba, weight, na.rm = TRUE),
+    PNC  = weighted.mean(pnc, weight, na.rm = TRUE)
+  ) %>%
+  mutate(year = "2015")
+
+edu_2024 <- dhs_2024 %>%
+  group_by(v106) %>%
+  summarise(
+    ANC4 = weighted.mean(anc4plus, weight, na.rm = TRUE),
+    SBA  = weighted.mean(sba, weight, na.rm = TRUE),
+    PNC  = weighted.mean(pnc, weight, na.rm = TRUE)
+  ) %>%
+  mutate(year = "2024")
+
+edu_long <- bind_rows(edu_2015, edu_2024) %>%
+  mutate(
+    education = factor(v106,
+                       levels = c(0,1,2,3),
+                       labels = c("No\neducation",
+                                  "Prim","Second","Higher"))
+  ) %>%
+  pivot_longer(cols = c(ANC4, SBA, PNC),
+               names_to = "indicator",
+               values_to = "coverage")
+
+ggplot(edu_long, aes(x = education, y = coverage, fill = year)) +
+  geom_col(position = "dodge") +
+  facet_wrap(~indicator) +
+  scale_y_continuous(labels = percent_format(accuracy = 1)) +
+  labs(
+    title = "Maternal Health Coverage by Education Level",
+    x = "Education Level",
+    y = "Weighted Coverage"
+  ) +
+  theme_minimal() +
+  theme(
+    axis.title.x = element_text(size = 14, hjust =1),
+    strip.text = element_text(size = 14),
+    plot.title = element_text(size = 14,
+                              face = "bold")
+  )
+```
+
+
+Higher education is associated with better maternal health service 
+utilization, with persistent disparities across all indicators.
+
+
+
+### **II.3.4. Maternal health indicators by by urban/rural residence**
+
+```{r}
+res_2015 <- dhs_2015 %>%
+  group_by(v025) %>%
+  summarise(
+    ANC4 = weighted.mean(anc4plus, weight, na.rm = TRUE),
+    SBA  = weighted.mean(sba, weight, na.rm = TRUE),
+    PNC  = weighted.mean(pnc, weight, na.rm = TRUE)
+  ) %>%
+  mutate(year = "2015")
+
+res_2024 <- dhs_2024 %>%
+  group_by(v025) %>%
+  summarise(
+    ANC4 = weighted.mean(anc4plus, weight, na.rm = TRUE),
+    SBA  = weighted.mean(sba, weight, na.rm = TRUE),
+    PNC  = weighted.mean(pnc, weight, na.rm = TRUE)
+  ) %>%
+  mutate(year = "2024")
+
+res_long <- bind_rows(res_2015, res_2024) %>%
+  mutate(
+    residence = factor(v025,
+                       levels = c(1,2),
+                       labels = c("Urban","Rural"))
+  ) %>%
+  pivot_longer(cols = c(ANC4, SBA, PNC),
+               names_to = "indicator",
+               values_to = "coverage")
+
+ggplot(res_long, aes(x = residence, y = coverage, fill = year)) +
+  geom_col(position = "dodge") +
+  facet_wrap(~indicator) +
+  scale_y_continuous(labels = percent_format(accuracy = 1)) +
+  labs(
+    title = "Maternal Health Coverage by Residence",
+    x = "Residence",
+    y = "Weighted Coverage"
+  ) +
+  theme_minimal()
+```
+
+
+
+Urban areas have higher coverage than rural areas, with persistent 
+disparities and a decline in skilled birth attendance in both settings.
+
+
+### **II.3.5. Distribution of ANC visits**
+
+```{r}
+ggplot(dhs_2024, aes(x = m14_1)) +
+  geom_histogram(binwidth = 1) +
+  labs(
+    title = "Distribution of Antenatal Care Visits, Malawi 2024",
+    x = "Number of ANC Visits",
+    y = "Count"
+  ) +
+  theme_minimal()
+
+
+ggplot(dhs_2015, aes(x = m14_1)) +
+  geom_histogram(binwidth = 1) +
+  labs(
+    title = "Distribution of Antenatal Care Visits, Malawi 2015",
+    x = "Number of ANC Visits",
+    y = "Count"
+  ) +
+  theme_minimal()
+```
+
+
+
+Most women have 4 or more ANC visits, but some still fall below recommended 
+levels.
+
+### **II.3.6. Missing values for key indicators**
+
+
+```{r}
+missing_df <- tibble(
+  variable = c("ANC4+", "SBA", "PNC"),
+  missing_2015 = c(
+    sum(is.na(dhs_2015$anc4plus)),
+    sum(is.na(dhs_2015$sba)),
+    sum(is.na(dhs_2015$pnc))
+  ),
+  missing_2024 = c(
+    sum(is.na(dhs_2024$anc4plus)),
+    sum(is.na(dhs_2024$sba)),
+    sum(is.na(dhs_2024$pnc))
+  )
+) %>%
+  pivot_longer(cols = c(missing_2015, missing_2024),
+               names_to = "year",
+               values_to = "missing_count")
+
+ggplot(missing_df, aes(x = variable, y = missing_count, fill = year)) +
+  geom_col(position = "dodge") +
+  labs(
+    title = "Missing Values for Key Maternal Health Indicators",
+    x = "Indicator",
+    y = "Number of Missing Values"
+  ) +
+  theme_minimal()
+```
+
+
+
+Missing data is higher in 2024 for ANC and PNC, while SBA remains largely 
+complete, indicating potential data quality concerns for some indicators.
+
+
+### **II.3.7. District-level descriptive visualization**
+
+
+```{r}
+district_sba_2024 <- dhs_2024 %>%
+  group_by(district_key) %>%
+  summarise(sba_rate = weighted.mean(sba, weight, na.rm = TRUE)) %>%
+  arrange(sba_rate)
+
+ggplot(district_sba_2024, aes(x = reorder(district_key, sba_rate), y = sba_rate)) +
+  geom_col() +
+  coord_flip() +
+  scale_y_continuous(labels = percent_format(accuracy = 1)) +
+  labs(
+    title = "Skilled Birth Attendance by District, Malawi 2024",
+    x = "District",
+    y = "Weighted SBA Coverage"
+  ) +
+  theme_minimal()
+```
+
+
+
+The chart shows substantial variation in skilled birth attendance across 
+districts in Malawi in 2024. Some districts have relatively higher coverage, 
+while others lag significantly behind, indicating geographic disparities in 
+access to skilled delivery services.
+
+
+## **Exploratory data analysis conclusion**
+
+The exploratory data analysis reveals mixed progress in maternal health 
+service utilization in Malawi between 2015 and 2024. Antenatal care (ANC4+) 
+coverage improved over time, and postnatal care (PNC) remained consistently 
+high. However, skilled birth attendance (SBA) declined, indicating a critical 
+gap in the maternal care continuum.
+
+
+## **II.4 PREDICTIVE MODELING**
+
+
+### ** II.4.1. Objective of the Model**
+
+The objective of the predictive modeling component is to identify the key individual, household, and contextual factors associated with the non-utilization of essential maternal health services in Malawi. Specifically, the model seeks to estimate the likelihood that a woman does not receive adequate maternal care—such as completing at least four antenatal care visits (ANC 4+), delivering with a skilled birth attendant (SBA), or receiving postnatal care (PNC)—based on her socioeconomic and demographic characteristics.
+
+By quantifying these relationships, the model aims to move beyond descriptive and equity analyses to provide a more rigorous understanding of the determinants of service utilization. This allows for the identification of high-risk population groups and supports the development of targeted, data-driven interventions.
+
+In addition, the predictive modeling approach contributes to the broader research objective of assessing whether improvements in service coverage are equitably distributed and whether certain populations remain systematically underserved. Ultimately, this analysis provides evidence to inform more precise and effective maternal health planning and policy decisions in Malawi.
+
+
+
+### **II.4.2. Outcome Variable**
+
+The primary outcome variable for the predictive modeling analysis is the utilization of key maternal health services, operationalized as binary indicators derived from the Demographic and Health Survey (DHS) data.
+
+Three outcome variables are considered, each reflecting a critical component of the continuum of maternal care:
+
+- **Antenatal Care (ANC 4+)**: A binary variable indicating whether a woman received at least four antenatal care visits during her most recent pregnancy (1 = yes, 0 = no).
+- **Skilled Birth Attendance (SBA)**: A binary variable indicating whether the most recent delivery was assisted by a skilled health provider (1 = yes, 0 = no).
+- **Postnatal Care (PNC)**: A binary variable indicating whether the woman received postnatal care within a specified period following delivery (1 = yes, 0 = no).
+
+For the purposes of predictive modeling, the analysis focuses on modeling the probability of **non-utilization** of these services. Therefore, each outcome is recoded such that:
+
+- 1 = non-utilization (did not receive the service)
+- 0 = utilization (received the service)
+
+This coding facilitates the interpretation of model results in terms of identifying populations at higher risk of inadequate maternal care. Among the three indicators, particular emphasis is placed on skilled birth attendance (SBA), given its strong association with maternal mortality outcomes and its role as a critical intervention in preventing complications during delivery.
+
+The use of binary outcome variables is appropriate for logistic regression modeling, which estimates the probability of an event occurring—in this case, the likelihood that a woman does not utilize a given maternal health service.
+
+
+
+### **II.4.3. Predictor Variables**
+
+
+The selection of predictor variables is guided by the conceptual framework of the social determinants of health, which emphasizes the role of socioeconomic, demographic, and contextual factors in shaping access to and utilization of maternal health services.
+
+Based on data availability in the DHS datasets and relevance to maternal health outcomes, the following categories of predictors are included in the analysis:
+
+**Socioeconomic Factors**
+- **Wealth Index (v190)**: Categorized into quintiles (poorest to richest), representing household economic status.
+- **Education Level (v106)**: Categorized as no education, primary, secondary, and higher education.
+
+**Demographic Characteristics**
+- **Age of the respondent (v012)**: Included as a continuous variable or categorized into age groups.
+- **Marital status (v501)**: Categorized to reflect partnership status, which may influence care-seeking behavior.
+- **Parity (number of children ever born, v201)**: Reflects maternal experience and potential differences in healthcare utilization.
+
+**Geographic Factors**
+- **Place of residence (v025)**: Urban vs. rural classification.
+- **Region or district of residence**: Captures geographic variation in access to services and health system performance.
+
+**Access and Information Factors (if available)**
+- **Exposure to media (e.g., radio, television)**: Proxy for health information access.
+- **Distance to health facility or perceived barriers to care**: Where available, used to capture access constraints.
+
+These variables are selected based on prior literature and empirical evidence indicating their association with maternal health service utilization. Including a combination of socioeconomic, demographic, and geographic predictors allows the model to capture both structural and individual-level determinants of service use.
+
+All categorical variables are recoded into appropriate formats for modeling, and reference categories are defined to facilitate interpretation of regression coefficients. Continuous variables are assessed for distribution and, where necessary, transformed or categorized to improve model stability and interpretability.
+
+
+### **II.4.4. Model Specification**
+
+
+To estimate the determinants of maternal health service non-utilization, this study employs a binary classification modeling approach using logistic regression. Given that the outcome variables are binary (non-utilization vs. utilization), logistic regression is appropriate for estimating the probability that a woman does not utilize a given maternal health service.
+
+The general form of the model is specified as:
+
+logit(P(Y = 1)) = β₀ + β₁X₁ + β₂X₂ + ... + βₖXₖ
+
+Where:
+- Y represents the binary outcome (non-utilization of ANC 4+, SBA, or PNC)
+- X₁ to Xₖ represent the set of predictor variables (e.g., wealth, education, residence, age, parity)
+- β₀ is the intercept, and β₁ to βₖ are the coefficients associated with each predictor
+
+The modeling process is implemented in Python using standard data science libraries, including `pandas` for data manipulation and `scikit-learn` for model estimation. Data preparation, including cleaning and feature engineering, is conducted in R, and the resulting dataset is exported for modeling in Python.
+
+Separate models are estimated for each outcome variable (ANC 4+, SBA, and PNC) to capture distinct dimensions of maternal health service utilization. The primary focus is on predicting the likelihood of non-utilization.
+
+To ensure robustness and interpretability of the models, the following steps are undertaken:
+
+- **Data preprocessing**: Handling missing values, encoding categorical variables, and standardizing continuous variables where appropriate
+- **Train-test split**: Dividing the dataset into training and testing subsets to evaluate model performance
+- **Model evaluation**: Assessing predictive performance using metrics such as accuracy, precision, recall, and the Area Under the Receiver Operating Characteristic Curve (AUC-ROC)
+- **Interpretation**: Examining model coefficients and feature importance to identify key determinants of non-utilization
+
+This approach allows for both explanatory and predictive insights, bridging traditional statistical analysis with modern machine learning techniques. The results provide a deeper understanding of which factors most strongly influence maternal health service utilization and help identify populations at higher risk of being underserved.
+In addition to logistic regression, alternative machine learning models (e.g., random forest or gradient boosting) may be explored to compare predictive performance and assess non-linear relationships between predictors and outcomes.
+
+
+
+### **II.4.5. Model Implementation Using Python in RStudio**
+
+
+
+
+
+
+### II.4.5 Model Implementation Using Python in RStudio
+
+### **Installing reticulate once in R**
+
+```{r}
+library(reticulate)
+
+py_require(c("pandas", "numpy", "scikit-learn", "matplotlib"))
+```
+
+
+### Step 2 — In Quarto, add a Python chunk
+
+
+```{python}
+import pandas as pd
+import numpy as np
+import matplotlib.pyplot as plt
+from sklearn.model_selection import train_test_split
+from sklearn.linear_model import LogisticRegression
+from sklearn.metrics import confusion_matrix, classification_report, roc_auc_score, roc_curve
+
+print("Python packages loaded successfully")
+```
+This section implements a logistic regression model using Python within the RStudio environment via the reticulate package. This approach allows integration of Python’s machine learning capabilities (scikit-learn) within the broader R-based data workflow.
+
+
+### **Creating and exporting the modeling dataset in R**
+
+```{r}
+library(tidyverse)
+library(haven)
+
+# Create modeling dataset from DHS 2024
+model_data_2024 <- dhs_2024 %>%
+  select(
+    anc4plus,
+    sba,
+    pnc,
+    v190,   # wealth index
+    v106,   # education level
+    v025,   # residence
+    v012,   # age
+    v201    # parity
+  ) %>%
+  mutate(
+    v190 = as_factor(v190),
+    v106 = as_factor(v106),
+    v025 = as_factor(v025)
+  ) %>%
+  drop_na()
+
+# Export for Python
+write.csv(model_data_2024, "3_Output/model_data_2024.csv", row.names = FALSE)
+```
+
+
+### **Running the predictive model in Python**
+
+```{python}
+import pandas as pd
+import numpy as np
+import matplotlib.pyplot as plt
+from sklearn.model_selection import train_test_split
+from sklearn.linear_model import LogisticRegression
+from sklearn.metrics import confusion_matrix, classification_report, roc_auc_score, roc_curve
+
+# Load dataset
+df = pd.read_csv("3_Output/model_data_2024.csv")
+
+# Create outcome variable
+df["sba_nonuse"] = np.where(df["sba"] == 1, 0, 1)
+
+# Define predictors
+X = df[["v190", "v106", "v025", "v012", "v201"]]
+y = df["sba_nonuse"]
+
+# Convert categorical variables
+X = pd.get_dummies(X, columns=["v190", "v106", "v025"], drop_first=True)
+
+# Train-test split
+X_train, X_test, y_train, y_test = train_test_split(
+    X, y,
+    test_size=0.30,
+    random_state=42,
+    stratify=y
+)
+
+# Train model
+model = LogisticRegression(max_iter=1000)
+model.fit(X_train, y_train)
+
+# Predictions
+y_pred = model.predict(X_test)
+y_prob = model.predict_proba(X_test)[:, 1]
+
+# Results
+print("Accuracy:", round((y_pred == y_test).mean(), 3))
+print("ROC-AUC:", round(roc_auc_score(y_test, y_prob), 3))
+
+print("\nConfusion Matrix:")
+print(confusion_matrix(y_test, y_pred))
+
+print("\nClassification Report:")
+print(classification_report(y_test, y_pred))
+```
+
+
+
+
+
+
+
+### **II.4.6.Interpretation**
+
+The logistic regression model achieved a high overall classification accuracy of 97.4%. However, this performance is misleading due to substantial class imbalance in the dataset, where the majority of observations correspond to women who utilized skilled birth attendance (SBA).
+
+The confusion matrix and classification metrics reveal that the model failed to correctly predict any cases of SBA non-utilization (class 1). Specifically, the model produced zero precision, recall, and F1-score for the minority class, indicating a complete inability to identify women who did not use SBA services.
+
+This limitation is further reflected in the ROC-AUC value of 0.683, which suggests only moderate discriminative ability. The discrepancy between high accuracy and poor minority class performance highlights the inadequacy of accuracy as a sole evaluation metric in imbalanced datasets.
+
+These findings underscore a critical challenge in applying predictive modeling to maternal health service utilization: rare but policy-relevant outcomes, such as non-use of essential services, are often poorly captured by standard models. This has important implications for targeting interventions, as the populations most at risk may remain undetected.
+
+Future modeling efforts should incorporate techniques to address class imbalance, such as resampling methods (e.g., oversampling or SMOTE), class weighting, or alternative algorithms better suited to imbalanced data.
+
+
+### **Balancing**
+
+
+```{Python}
+import pandas as pd
+import numpy as np
+
+from sklearn.model_selection import train_test_split
+from sklearn.linear_model import LogisticRegression
+from sklearn.metrics import confusion_matrix, classification_report, roc_auc_score
+
+# Load dataset
+df = pd.read_csv("3_Output/model_data_2024.csv")
+
+# Outcome: 1 = did NOT use SBA, 0 = used SBA
+df["sba_nonuse"] = np.where(df["sba"] == 1, 0, 1)
+
+# Keep predictors
+X = df[["v190", "v106", "v025", "v012", "v201"]]
+y = df["sba_nonuse"]
+
+# Convert categorical predictors to dummy variables
+X = pd.get_dummies(
+    X,
+    columns=["v190", "v106", "v025"],
+    drop_first=True
+)
+
+# Split data
+X_train, X_test, y_train, y_test = train_test_split(
+    X,
+    y,
+    test_size=0.30,
+    random_state=42,
+    stratify=y
+)
+
+# Balanced logistic regression
+model = LogisticRegression(
+    max_iter=1000,
+    class_weight="balanced"
+)
+
+model.fit(X_train, y_train)
+
+# Predictions
+y_pred = model.predict(X_test)
+y_prob = model.predict_proba(X_test)[:, 1]
+
+# Results
+print("Balanced Logistic Regression Model")
+print("Accuracy:", round((y_pred == y_test).mean(), 3))
+print("ROC-AUC:", round(roc_auc_score(y_test, y_prob), 3))
+
+print("\nConfusion Matrix:")
+print(confusion_matrix(y_test, y_pred))
+
+print("\nClassification Report:")
+print(classification_report(y_test, y_pred, zero_division=0))
+```
+
+Key results
+Accuracy: 0.68
+ROC-AUC: 0.685
+Recall for SBA non-use: 0.57
+Precision for SBA non-use: 0.05
+
+The first model had very high accuracy but failed to identify any women who did not use SBA. After applying class balancing, the model now detects 57% of SBA non-use cases, which is a major improvement. However, precision remains very low, meaning many women predicted as non-users were actually users.
+
+### **II.4.6.Interpretation**
+
+The balanced logistic regression model achieved an accuracy of 68% and an ROC-AUC of 0.685, indicating moderate discriminative ability. Compared with the initial unbalanced model, the balanced model substantially improved detection of skilled birth attendance non-utilization. Specifically, recall for the non-utilization class increased to 57%, meaning the model correctly identified more than half of women who did not use skilled birth attendance.
+
+However, precision for the non-utilization class remained low at 5%, indicating that many women classified as non-users were actually users. This reflects the challenge of modeling rare but policy-relevant outcomes in highly imbalanced maternal health datasets. Overall, the model is more useful for identifying potentially at-risk groups than for making precise individual-level predictions.
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
