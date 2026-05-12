@@ -1,0 +1,225 @@
+"district_key","NAME_1","indicator","year","percent"
+"balaka","Balaka","Skilled Birth Attendance",2015,50.1529355715427
+"balaka","Balaka","ANC 4+",2015,57.5452470666889
+"balaka","Balaka","Postnatal Care",2015,100
+"balaka","Balaka","Coverage Index",2015,69.2327275460772
+"balaka","Balaka","Skilled Birth Attendance",2024,37.811200825522
+"balaka","Balaka","ANC 4+",2024,57.992345226674
+"balaka","Balaka","Postnatal Care",2024,99.8112448450231
+"balaka","Balaka","Coverage Index",2024,65.2049302990731
+"blantyre","Blantyre","Skilled Birth Attendance",2015,45.1867900195804
+"blantyre","Blantyre","ANC 4+",2015,44.1274676619017
+"blantyre","Blantyre","Postnatal Care",2015,99.5963990332776
+"blantyre","Blantyre","Coverage Index",2015,62.9702189049199
+"blantyre","Blantyre","Skilled Birth Attendance",2024,33.2930150557188
+"blantyre","Blantyre","ANC 4+",2024,56.5706976147934
+"blantyre","Blantyre","Postnatal Care",2024,99.0849740979339
+"blantyre","Blantyre","Coverage Index",2024,62.9828955894821
+"chikwawa","Chikwawa","Skilled Birth Attendance",2015,56.9585248159078
+"chikwawa","Chikwawa","ANC 4+",2015,37.4703365095795
+"chikwawa","Chikwawa","Postnatal Care",2015,99.7645654139781
+"chikwawa","Chikwawa","Coverage Index",2015,64.7311422464885
+"chikwawa","Chikwawa","Skilled Birth Attendance",2024,37.7076991423906
+"chikwawa","Chikwawa","ANC 4+",2024,48.1733750318557
+"chikwawa","Chikwawa","Postnatal Care",2024,98.6477951301012
+"chikwawa","Chikwawa","Coverage Index",2024,61.5096231014492
+"chiradzulu","Chiradzulu","Skilled Birth Attendance",2015,49.1528875401836
+"chiradzulu","Chiradzulu","ANC 4+",2015,50.7061172347157
+"chiradzulu","Chiradzulu","Postnatal Care",2015,99.711644218264
+"chiradzulu","Chiradzulu","Coverage Index",2015,66.5235496643877
+"chiradzulu","Chiradzulu","Skilled Birth Attendance",2024,30.5710545247451
+"chiradzulu","Chiradzulu","ANC 4+",2024,54.5278396511754
+"chiradzulu","Chiradzulu","Postnatal Care",2024,99.5225379850651
+"chiradzulu","Chiradzulu","Coverage Index",2024,61.5404773869952
+"chitipa","Chitipa","Skilled Birth Attendance",2015,55.014186552121
+"chitipa","Chitipa","ANC 4+",2015,47.1576947720755
+"chitipa","Chitipa","Postnatal Care",2015,98.7179913551035
+"chitipa","Chitipa","Coverage Index",2015,66.9632908931
+"chitipa","Chitipa","Skilled Birth Attendance",2024,33.1825379837213
+"chitipa","Chitipa","ANC 4+",2024,57.8133295653743
+"chitipa","Chitipa","Postnatal Care",2024,100
+"chitipa","Chitipa","Coverage Index",2024,63.6652891830319
+"dedza","Dedza","Skilled Birth Attendance",2015,47.2209833126797
+"dedza","Dedza","ANC 4+",2015,52.561890397487
+"dedza","Dedza","Postnatal Care",2015,99.5849895182646
+"dedza","Dedza","Coverage Index",2015,66.4559544094771
+"dedza","Dedza","Skilled Birth Attendance",2024,31.9545092853471
+"dedza","Dedza","ANC 4+",2024,63.0289658235878
+"dedza","Dedza","Postnatal Care",2024,100
+"dedza","Dedza","Coverage Index",2024,64.9944917029783
+"dowa","Dowa","Skilled Birth Attendance",2015,48.6138846413319
+"dowa","Dowa","ANC 4+",2015,57.5341975509226
+"dowa","Dowa","Postnatal Care",2015,99.7994722326964
+"dowa","Dowa","Coverage Index",2015,68.649184808317
+"dowa","Dowa","Skilled Birth Attendance",2024,32.2951835967387
+"dowa","Dowa","ANC 4+",2024,71.7719554313214
+"dowa","Dowa","Postnatal Care",2024,100
+"dowa","Dowa","Coverage Index",2024,68.02237967602
+"karonga","Karonga","Skilled Birth Attendance",2015,52.0225730940323
+"karonga","Karonga","ANC 4+",2015,44.2181380669904
+"karonga","Karonga","Postnatal Care",2015,100
+"karonga","Karonga","Coverage Index",2015,65.4135703870076
+"karonga","Karonga","Skilled Birth Attendance",2024,37.1220272350892
+"karonga","Karonga","ANC 4+",2024,72.1451442315457
+"karonga","Karonga","Postnatal Care",2024,99.142740111474
+"karonga","Karonga","Coverage Index",2024,69.4699705260363
+"kasungu","Kasungu","Skilled Birth Attendance",2015,52.3673663929126
+"kasungu","Kasungu","ANC 4+",2015,53.7236820165423
+"kasungu","Kasungu","Postnatal Care",2015,99.7940590772367
+"kasungu","Kasungu","Coverage Index",2015,68.6283691622305
+"kasungu","Kasungu","Skilled Birth Attendance",2024,33.5085031099831
+"kasungu","Kasungu","ANC 4+",2024,60.3791239374753
+"kasungu","Kasungu","Postnatal Care",2024,99.5267649030639
+"kasungu","Kasungu","Coverage Index",2024,64.4714639835074
+"likoma","Likoma","Skilled Birth Attendance",2015,42.8339088402062
+"likoma","Likoma","ANC 4+",2015,67.5668643410636
+"likoma","Likoma","Postnatal Care",2015,99.7579706668303
+"likoma","Likoma","Coverage Index",2015,70.0529146160334
+"likoma","Likoma","Skilled Birth Attendance",2024,26.1815290711117
+"likoma","Likoma","ANC 4+",2024,68.5575060355843
+"likoma","Likoma","Postnatal Care",2024,100
+"likoma","Likoma","Coverage Index",2024,64.913011702232
+"lilongwe","Lilongwe","Skilled Birth Attendance",2015,46.9558297402268
+"lilongwe","Lilongwe","ANC 4+",2015,50.3257790706316
+"lilongwe","Lilongwe","Postnatal Care",2015,99.7646226325547
+"lilongwe","Lilongwe","Coverage Index",2015,65.6820771478044
+"lilongwe","Lilongwe","Skilled Birth Attendance",2024,30.3621520617629
+"lilongwe","Lilongwe","ANC 4+",2024,55.0998141882965
+"lilongwe","Lilongwe","Postnatal Care",2024,100
+"lilongwe","Lilongwe","Coverage Index",2024,61.8206554166865
+"machinga","Machinga","Skilled Birth Attendance",2015,63.1781387169424
+"machinga","Machinga","ANC 4+",2015,50.3710180869825
+"machinga","Machinga","Postnatal Care",2015,99.569672042471
+"machinga","Machinga","Coverage Index",2015,71.0396096154653
+"machinga","Machinga","Skilled Birth Attendance",2024,40.9205628676408
+"machinga","Machinga","ANC 4+",2024,65.3771287088374
+"machinga","Machinga","Postnatal Care",2024,99.7469764571891
+"machinga","Machinga","Coverage Index",2024,68.6815560112224
+"mangochi","Mangochi","Skilled Birth Attendance",2015,53.2915351934108
+"mangochi","Mangochi","ANC 4+",2015,46.0349149744768
+"mangochi","Mangochi","Postnatal Care",2015,99.0619483737838
+"mangochi","Mangochi","Coverage Index",2015,66.1294661805571
+"mangochi","Mangochi","Skilled Birth Attendance",2024,41.7870945932564
+"mangochi","Mangochi","ANC 4+",2024,68.6809633258189
+"mangochi","Mangochi","Postnatal Care",2024,100
+"mangochi","Mangochi","Coverage Index",2024,70.1560193063584
+"mchinji","Mchinji","Skilled Birth Attendance",2015,57.9492204817507
+"mchinji","Mchinji","ANC 4+",2015,51.5028320938251
+"mchinji","Mchinji","Postnatal Care",2015,99.5510099940644
+"mchinji","Mchinji","Coverage Index",2015,69.6676875232134
+"mchinji","Mchinji","Skilled Birth Attendance",2024,29.1379249054658
+"mchinji","Mchinji","ANC 4+",2024,66.1441851894223
+"mchinji","Mchinji","Postnatal Care",2024,100
+"mchinji","Mchinji","Coverage Index",2024,65.094036698296
+"mulanje","Mulanje","Skilled Birth Attendance",2015,49.2496118615862
+"mulanje","Mulanje","ANC 4+",2015,45.4960536250413
+"mulanje","Mulanje","Postnatal Care",2015,99.1801215978917
+"mulanje","Mulanje","Coverage Index",2015,64.6419290281731
+"mulanje","Mulanje","Skilled Birth Attendance",2024,33.2509171828527
+"mulanje","Mulanje","ANC 4+",2024,66.0142876571677
+"mulanje","Mulanje","Postnatal Care",2024,98.6580246289524
+"mulanje","Mulanje","Coverage Index",2024,65.974409822991
+"mwanza","Mwanza","Skilled Birth Attendance",2015,53.4213617907306
+"mwanza","Mwanza","ANC 4+",2015,38.2211201260869
+"mwanza","Mwanza","Postnatal Care",2015,96.2961868331011
+"mwanza","Mwanza","Coverage Index",2015,62.6462229166395
+"mwanza","Mwanza","Skilled Birth Attendance",2024,34.1599780346997
+"mwanza","Mwanza","ANC 4+",2024,64.9977329787794
+"mwanza","Mwanza","Postnatal Care",2024,99.3461419478468
+"mwanza","Mwanza","Coverage Index",2024,66.1679509871086
+"mzimba","Mzimba","Skilled Birth Attendance",2015,52.0270585234879
+"mzimba","Mzimba","ANC 4+",2015,57.0601821041784
+"mzimba","Mzimba","Postnatal Care",2015,98.9240523536087
+"mzimba","Mzimba","Coverage Index",2015,69.337097660425
+"mzimba","Mzimba","Skilled Birth Attendance",2024,33.5627834211228
+"mzimba","Mzimba","ANC 4+",2024,59.8262220701718
+"mzimba","Mzimba","Postnatal Care",2024,100
+"mzimba","Mzimba","Coverage Index",2024,64.4630018304315
+"neno","Neno","Skilled Birth Attendance",2015,56.9055518212048
+"neno","Neno","ANC 4+",2015,56.7608948069125
+"neno","Neno","Postnatal Care",2015,99.8054624606932
+"neno","Neno","Coverage Index",2015,71.1573030296035
+"neno","Neno","Skilled Birth Attendance",2024,35.0512504412663
+"neno","Neno","ANC 4+",2024,79.436091409964
+"neno","Neno","Postnatal Care",2024,100
+"neno","Neno","Coverage Index",2024,71.4957806170768
+"nkhata bay","Nkhata Bay","Skilled Birth Attendance",2015,48.8692330968697
+"nkhata bay","Nkhata Bay","ANC 4+",2015,57.3704100023521
+"nkhata bay","Nkhata Bay","Postnatal Care",2015,100
+"nkhata bay","Nkhata Bay","Coverage Index",2015,68.7465476997406
+"nkhata bay","Nkhata Bay","Skilled Birth Attendance",2024,36.7390337739463
+"nkhata bay","Nkhata Bay","ANC 4+",2024,74.4773278708593
+"nkhata bay","Nkhata Bay","Postnatal Care",2024,100
+"nkhata bay","Nkhata Bay","Coverage Index",2024,70.4054538816018
+"nkhotakota","Nkhotakota","Skilled Birth Attendance",2015,47.2014625202256
+"nkhotakota","Nkhotakota","ANC 4+",2015,46.6413716039662
+"nkhotakota","Nkhotakota","Postnatal Care",2015,99.7435868108787
+"nkhotakota","Nkhotakota","Coverage Index",2015,64.5288069783569
+"nkhotakota","Nkhotakota","Skilled Birth Attendance",2024,36.5082863633329
+"nkhotakota","Nkhotakota","ANC 4+",2024,66.7363044805913
+"nkhotakota","Nkhotakota","Postnatal Care",2024,98.9380299259467
+"nkhotakota","Nkhotakota","Coverage Index",2024,67.3942069232903
+"nsanje","Nsanje","Skilled Birth Attendance",2015,58.0197989324176
+"nsanje","Nsanje","ANC 4+",2015,43.5815554177198
+"nsanje","Nsanje","Postnatal Care",2015,99.421943407632
+"nsanje","Nsanje","Coverage Index",2015,67.0077659192565
+"nsanje","Nsanje","Skilled Birth Attendance",2024,35.685168498074
+"nsanje","Nsanje","ANC 4+",2024,66.1333760290675
+"nsanje","Nsanje","Postnatal Care",2024,99.4114059229651
+"nsanje","Nsanje","Coverage Index",2024,67.0766501500355
+"ntcheu","Ntcheu","Skilled Birth Attendance",2015,50.9531452359625
+"ntcheu","Ntcheu","ANC 4+",2015,49.5816720682546
+"ntcheu","Ntcheu","Postnatal Care",2015,99.4076116089765
+"ntcheu","Ntcheu","Coverage Index",2015,66.6474763043979
+"ntcheu","Ntcheu","Skilled Birth Attendance",2024,34.425020679603
+"ntcheu","Ntcheu","ANC 4+",2024,62.2701788671605
+"ntcheu","Ntcheu","Postnatal Care",2024,100
+"ntcheu","Ntcheu","Coverage Index",2024,65.5650665155878
+"ntchisi","Ntchisi","Skilled Birth Attendance",2015,58.3050068677112
+"ntchisi","Ntchisi","ANC 4+",2015,56.4847711583938
+"ntchisi","Ntchisi","Postnatal Care",2015,99.2531003021858
+"ntchisi","Ntchisi","Coverage Index",2015,71.3476261094303
+"ntchisi","Ntchisi","Skilled Birth Attendance",2024,31.4750098758329
+"ntchisi","Ntchisi","ANC 4+",2024,67.850282479935
+"ntchisi","Ntchisi","Postnatal Care",2024,100
+"ntchisi","Ntchisi","Coverage Index",2024,66.4417641185893
+"phalombe","Phalombe","Skilled Birth Attendance",2015,54.0153168618156
+"phalombe","Phalombe","ANC 4+",2015,62.2274578282778
+"phalombe","Phalombe","Postnatal Care",2015,99.3692952446221
+"phalombe","Phalombe","Coverage Index",2015,71.8706899782385
+"phalombe","Phalombe","Skilled Birth Attendance",2024,30.5809717540652
+"phalombe","Phalombe","ANC 4+",2024,58.2434179623587
+"phalombe","Phalombe","Postnatal Care",2024,100
+"phalombe","Phalombe","Coverage Index",2024,62.941463238808
+"rumphi","Rumphi","Skilled Birth Attendance",2015,52.1247173222584
+"rumphi","Rumphi","ANC 4+",2015,43.8771090087405
+"rumphi","Rumphi","Postnatal Care",2015,99.9048325928869
+"rumphi","Rumphi","Coverage Index",2015,65.3022196412953
+"rumphi","Rumphi","Skilled Birth Attendance",2024,31.3219582761156
+"rumphi","Rumphi","ANC 4+",2024,60.7364984966566
+"rumphi","Rumphi","Postnatal Care",2024,100
+"rumphi","Rumphi","Coverage Index",2024,64.0194855909241
+"salima","Salima","Skilled Birth Attendance",2015,56.1969469572714
+"salima","Salima","ANC 4+",2015,43.4509359213226
+"salima","Salima","Postnatal Care",2015,99.3083319185931
+"salima","Salima","Coverage Index",2015,66.318738265729
+"salima","Salima","Skilled Birth Attendance",2024,34.9752209922944
+"salima","Salima","ANC 4+",2024,59.2738961948886
+"salima","Salima","Postnatal Care",2024,99.5601180516368
+"salima","Salima","Coverage Index",2024,64.6030784129399
+"thyolo","Thyolo","Skilled Birth Attendance",2015,43.6263370360815
+"thyolo","Thyolo","ANC 4+",2015,44.4063341360147
+"thyolo","Thyolo","Postnatal Care",2015,99.242725573545
+"thyolo","Thyolo","Coverage Index",2015,62.4251322485471
+"thyolo","Thyolo","Skilled Birth Attendance",2024,31.6275147179222
+"thyolo","Thyolo","ANC 4+",2024,56.9315377759964
+"thyolo","Thyolo","Postnatal Care",2024,99.4400322017048
+"thyolo","Thyolo","Coverage Index",2024,62.6663615652078
+"zomba","Zomba","Skilled Birth Attendance",2015,53.2336552081803
+"zomba","Zomba","ANC 4+",2015,46.9497061056608
+"zomba","Zomba","Postnatal Care",2015,99.7088819015045
+"zomba","Zomba","Coverage Index",2015,66.6307477384485
+"zomba","Zomba","Skilled Birth Attendance",2024,34.4750432488569
+"zomba","Zomba","ANC 4+",2024,70.2750023520291
+"zomba","Zomba","Postnatal Care",2024,99.1802532003775
+"zomba","Zomba","Coverage Index",2024,67.9767662670878
